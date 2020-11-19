@@ -11,7 +11,7 @@ void processInput(GLFWwindow *window);
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
-
+World the_world;
 int main() {
     // glfw: initialize and configure
     // ------------------------------
@@ -63,8 +63,11 @@ int main() {
 
     Sphere sphere(0,0,0);
     sphere.setColors(vec3(0,1,0));
-    World the_world;
     sphere.init(the_world);
+
+
+    the_world.SetCamera(SCR_WIDTH,SCR_HEIGHT,1,10);
+    the_world.MoveCamera(vec3(0,0,1));
 
     the_world.init(&VAO,&VBO);
 

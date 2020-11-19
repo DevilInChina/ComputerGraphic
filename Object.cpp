@@ -66,7 +66,7 @@ void World::init(unsigned int *VAO,unsigned int *VBO) {
 
     glBindBuffer(GL_ARRAY_BUFFER, (*VBO));
     glBufferData(GL_ARRAY_BUFFER, pointsSize(), getPoints(), GL_DYNAMIC_DRAW);
-
+    
     // 位置属性
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), nullptr);
     glEnableVertexAttribArray(0);
