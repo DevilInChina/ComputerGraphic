@@ -33,6 +33,7 @@ public:
     std::vector<int> breaks;
     std::vector<unsigned int> types;
     int cnts = 0;
+    const float Pi=acos(-1.0);
     void load();
     void showSelf(){
         int _in_cnt = 0;
@@ -50,6 +51,7 @@ public:
     size_t pointsSize(){
         return points.size()*sizeof(float );
     }
+    void init(unsigned int *VAO,unsigned int *VBO);
 };
 class Object {
 protected:
