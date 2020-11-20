@@ -50,24 +50,27 @@ void Sphere::addColor(const glm::vec3 &loca,World&the_world) {
 
 void Sphere::init(World&the_world) {
     the_world.breaks.push_back(the_world.cnts);
-    r*=50;
-    float height = location.y+r;
-    setColors(glm::vec3(1,1,1));
-    addPoint(location.x,height,location.z,the_world);
+    r *=5;
+    float height = location.y + r;
 
-    for(int i = 0 ; i <4 ; ++i){
-        setColors(glm::vec3(i&1,i/2,0));
-        addPoint(location.x+r*cos(the_world.Pi/2*i),0,location.z+r*sin(the_world.Pi/2*i),the_world);
-    }
-    /*
-    addPoint(0.5f, -0.5f, 1.0f,the_world);
-    addPoint(-0.5f, -0.5f, -1.0f,the_world);
-    addPoint(0.0f, 0.0f, 0.0f,the_world);
-    */
+//    /*
+    setColors(glm::vec3 (0,0,1));
+    addPoint(0, r, 0, the_world);
+    setColors(glm::vec3 (0,1,0));
+    addPoint(r, 0, 0, the_world);
+    setColors(glm::vec3 (1,0,0));
+    addPoint(0, 0, r, the_world);
+    setColors(glm::vec3 (1,1,0));
+    addPoint(-r, 0, 0, the_world);
+    setColors(glm::vec3 (1,0,1));
+    addPoint(0, 0, -r, the_world);
+    //  */
     the_world.modeViewMatrices.push_back(&modelViewMatrix[0][0]);
 
     the_world.types.push_back(GL_TRIANGLE_FAN);
     the_world.breaks.push_back(the_world.cnts);
+
+
 }
 
 void World::load(unsigned int ShaderProgramID) {

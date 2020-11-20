@@ -22,13 +22,22 @@ class Camera{
         projectionMatrix[row].w=_w;
 
     }
-    void initMatrix(){
+    void initMatrix() {
         // -1 = (n-f)/(f-n)
         //
-        load4ofmtx(0,2/(r-l),0,0,-(r+l)/(r-l));
-        load4ofmtx(1,0,2/(t-b),0,-(t+b)/(t-b));
-        load4ofmtx(2,0,0,-2/(f-n),-(f+n)/(f-n));
-        load4ofmtx(3,0,0,0,1);
+        //*
+        /*load4ofmtx(0, 2 / (r - l), 0, 0, -(r + l) / (r - l));
+        load4ofmtx(1, 0, 2 / (t - b), 0, -(t + b) / (t - b));
+        load4ofmtx(2, 0, 0, -2 / (f - n), -(f + n) / (f - n));
+        load4ofmtx(3, 0, 0, 0, 1);
+         */
+        load4ofmtx(0, 2 *n/ (r - l), 0, (r + l) / (r - l),0);
+        load4ofmtx(1, 0, 2*n / (t - b),  (t + b) / (t - b),0);
+        load4ofmtx(2, 0, 0, -(f+n) / (f - n), -2*f * n / (f - n));
+        load4ofmtx(3, 0, 0, -1, 0);
+        //*/
+
+
     }
 
 public:
@@ -46,19 +55,18 @@ public:
     void setWH(float _w,float _h,float d_n,float d_f) {
         w = _w;
         h = _h;
-        _f = d_f;
-        _n = d_n;
+        if(d_f!=INFINITY) {
+            _f = d_f;
+        }
+        if(d_n!=INFINITY) {
+            _n = d_n;
+        }
         initializeCameraValue();
         lookat[0] = 0;
         lookat[1] = 0;
         lookat[2] = -1;
         lookat[3] = 1;
-        for(int i = 0 ; i < 4 ; ++i){
-            for(int j = 0 ; j < 4 ; ++j){
-                std::cout<<projectionMatrix[i][j]<<' ';
-            }
-            std::cout<<'\n';
-        }
+
     }
     void updateMatrix(){
 
@@ -101,7 +109,7 @@ public:
         cam.initializeCameraValue();
     }
 
-    void SetCamera(float w,float h,float n,float f){
+    void SetCamera(float w,float h,float n=INFINITY,float f=INFINITY){
         cam.setWH(w,h,n,f);
     }
 

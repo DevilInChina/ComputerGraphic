@@ -34,29 +34,14 @@ int main() {
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    // glad: load all OpenGL function pointers
-    // ---------------------------------------
     if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
 
-    // build and compile our shader program
-    // ------------------------------------
     Shader ourShader
     ("../shader.vert", "../shader.frag");
 
-
-    // set up vertex data (and buffer(s)) and configure vertex attributes
-    // ------------------------------------------------------------------
-    float vertices[] = {
-            // 位置信息         // 颜色信息
-            0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 0.0f,  // 右下
-            -0.5f, -0.5f, -1.0f, 0.0f, 1.0f, 0.0f,  // 左下
-            0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f ,  // 顶部
-            0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f   //
-
-    };
 
     __Index VBO, VAO;
 
@@ -65,24 +50,23 @@ int main() {
     sphere.init(the_world);
 
 
-    the_world.SetCamera(SCR_WIDTH,SCR_HEIGHT,1,10);
-    the_world.MoveCamera(glm::vec3(0,0,10));
+    the_world.SetCamera(SCR_WIDTH,SCR_HEIGHT,600,10000);
+    the_world.MoveCamera(glm::vec3(0,0,650));
 
     the_world.init(&VAO,&VBO);
 
     // 循环渲染
     int cnt=0;
-
     while (!glfwWindowShouldClose(window)) {
-        // input
         ++cnt;
+        // input
         // -----
         processInput(window);
 
         // render
         // ------
-        glClearColor(0.2f, 0.3f, sin(cnt*0.00001), 1.0f);
-        //sphere.rotate(0.001,glm::vec3(1,1,1));
+        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        sphere.rotate(0.0001,glm::vec3(0,0,1));
        // sphere.move(glm::vec3(0,0,0.001));
         glClear(GL_COLOR_BUFFER_BIT);
         // render the triangle
@@ -121,4 +105,5 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     // make sure the viewport matches the new window dimensions; note that width and
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
+    the_world.SetCamera(width,height);
 }
