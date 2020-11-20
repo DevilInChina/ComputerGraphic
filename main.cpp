@@ -1,6 +1,5 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-
 #include "Shader.h"
 
 #include <iostream>
@@ -62,12 +61,12 @@ int main() {
     __Index VBO, VAO;
 
     Sphere sphere(0,0,0);
-    sphere.setColors(vec3(0,1,0));
+   // sphere.setColors(glm::vec3(0,1,0));
     sphere.init(the_world);
 
 
     the_world.SetCamera(SCR_WIDTH,SCR_HEIGHT,1,10);
-    the_world.MoveCamera(vec3(0,0,1));
+    the_world.MoveCamera(glm::vec3(0,0,10));
 
     the_world.init(&VAO,&VBO);
 
@@ -83,12 +82,13 @@ int main() {
         // render
         // ------
         glClearColor(0.2f, 0.3f, sin(cnt*0.00001), 1.0f);
+        //sphere.rotate(0.001,glm::vec3(1,1,1));
+       // sphere.move(glm::vec3(0,0,0.001));
         glClear(GL_COLOR_BUFFER_BIT);
-
         // render the triangle
         ourShader.use();
         glBindVertexArray(VAO);
-        the_world.load();
+        the_world.load(ourShader.ID);
 //        glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)

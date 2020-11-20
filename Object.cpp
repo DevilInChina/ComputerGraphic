@@ -4,57 +4,82 @@
 
 #include "Object.h"
 #include "glad/glad.h"
+#include <glm/gtc/matrix_transform.hpp>
 using namespace std;
 Object::Object(float x, float y, float z):location(x,y,z){
+    memset(&modelViewMatrix[0][0],0,sizeof(float )*16);
+    for(int i = 0 ; i < 4 ; ++i)modelViewMatrix[i][i] = 1;
 }
 
 void Object::init(World&the_world) {}
+void Object::rotate(float angle,const glm::vec3 &rotate) {
+    memcpy(&modelViewMatrix[0][0],
+           &glm::rotate(modelViewMatrix,angle,rotate)[0][0],
+           sizeof(float )*16);
+}
+void Object::move(const glm::vec3 &move) {
+    memcpy(&modelViewMatrix[0][0],
+           &glm::translate(modelViewMatrix,move)[0][0],
+           sizeof(float )*16);
 
+}
 Sphere::Sphere(float x, float y, float z, float r) :Object(x,y,z),color(1,1,1){
     this->r=r;
 
 }
-void Sphere::setColors(const vec3 &col) {
+void Sphere::setColors(const glm::vec3 &col) {
     this->color = col;
 }
 void Sphere::addPoint(float x,float y,float z,World&the_world) {
-    addPoint(vec3(x,y,z),the_world);
+    addPoint(glm::vec3(x,y,z),the_world);
 }
-void Sphere::addPoint(const vec3 &loca,World&the_world) {
-    the_world.points.push_back(loca.x());
-    the_world.points.push_back(loca.y());
-    the_world.points.push_back(loca.z());
+void Sphere::addPoint(const glm::vec3 &loca,World&the_world) {
+    the_world.points.push_back(loca.x);
+    the_world.points.push_back(loca.y);
+    the_world.points.push_back(loca.z);
     addColor(color,the_world);
     ++the_world.cnts;
 }
-void Sphere::addColor(const vec3 &loca,World&the_world) {
-    the_world.points.push_back(loca.x());
-    the_world.points.push_back(loca.y());
-    the_world.points.push_back(loca.z());
+void Sphere::addColor(const glm::vec3 &loca,World&the_world) {
+    the_world.points.push_back(loca.x);
+    the_world.points.push_back(loca.y);
+    the_world.points.push_back(loca.z);
 }
 
 
 
 void Sphere::init(World&the_world) {
     the_world.breaks.push_back(the_world.cnts);
-    float height = location.y()+r;
-    addPoint(location.x(),height,location.z(),the_world);
+    r*=50;
+    float height = location.y+r;
+    setColors(glm::vec3(1,1,1));
+    addPoint(location.x,height,location.z,the_world);
+
     for(int i = 0 ; i <4 ; ++i){
-        addPoint(location.x()+r*cos(the_world.Pi/2*i),0,location.z()+r*sin(the_world.Pi/2*i),the_world);
+        setColors(glm::vec3(i&1,i/2,0));
+        addPoint(location.x+r*cos(the_world.Pi/2*i),0,location.z+r*sin(the_world.Pi/2*i),the_world);
     }
     /*
     addPoint(0.5f, -0.5f, 1.0f,the_world);
     addPoint(-0.5f, -0.5f, -1.0f,the_world);
     addPoint(0.0f, 0.0f, 0.0f,the_world);
     */
-     the_world.types.push_back(GL_TRIANGLE_FAN);
+    the_world.modeViewMatrices.push_back(&modelViewMatrix[0][0]);
+
+    the_world.types.push_back(GL_TRIANGLE_FAN);
     the_world.breaks.push_back(the_world.cnts);
 }
 
-void World::load() {
+void World::load(unsigned int ShaderProgramID) {
+    GLuint locas = glGetUniformLocation(ShaderProgramID,"projectionMatrix");
+    glUniformMatrix4fv(locas,1,GL_FALSE,cam.getMatrix());
     for(int i = 1 ; i < breaks.size() ; ++i){
+        locas = glGetUniformLocation(ShaderProgramID,"modelViewMatrix");
+        glUniformMatrix4fv(locas,1,GL_FALSE,modeViewMatrices[i-1]);
+
         glDrawArrays(types[i-1],breaks[i-1],breaks[i]);
     }
+
 }
 
 void World::init(unsigned int *VAO,unsigned int *VBO) {
@@ -66,13 +91,14 @@ void World::init(unsigned int *VAO,unsigned int *VBO) {
 
     glBindBuffer(GL_ARRAY_BUFFER, (*VBO));
     glBufferData(GL_ARRAY_BUFFER, pointsSize(), getPoints(), GL_DYNAMIC_DRAW);
-    
+
     // 位置属性
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), nullptr);
     glEnableVertexAttribArray(0);
     // 颜色属性
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *) (3 * sizeof(float)));
     glEnableVertexAttribArray(1);
+
     /*
     glVertexAttribPointer 指定了渲染时索引值为 index 的顶点属性数组的数据格式和位置。
     void glVertexAttribPointer( GLuint index, GLint size, GLenum type, GLboolean normalized,

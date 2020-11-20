@@ -34,6 +34,7 @@ endif(NOT OPENGL_FOUND)
 #########################################################
 
 include_directories(/home/kouushou/glfw-3.3.2/include)
+include_directories(/home/kouushou/Github/glm)
 link_directories(/home/kouushou/glfw-3.3.2/_lib/src)
 # https://github.com/glfw/glfw/releases/tag/3.3.2
 # create the program "test"
